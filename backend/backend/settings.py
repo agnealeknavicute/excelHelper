@@ -18,6 +18,7 @@ INSTALLED_APPS = [
     'rest_framework',
     'corsheaders',
     'myapi',
+    'polls'
 ]
 
 MIDDLEWARE = [
@@ -42,9 +43,9 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = 'django-insecure-+g0bhv55+hdorki5xsr2vbq!bi-%wa%9q5vq*8!#510u2ru0#7'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['XXX.XXX.XXX.XXX', 'localhost', '127.0.0.1']
 
 
 # Application definition

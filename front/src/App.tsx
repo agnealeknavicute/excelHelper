@@ -10,7 +10,7 @@ function App() {
     const [message, setMessage] = useState('');
 
     useEffect(() => {
-        axios.get('http://localhost:8000/hello-world/')
+        axios.get('http://127.0.0.1:8000/api/hello-world/')
             .then(response => {
                 debugger
                 setMessage(response.data.message);

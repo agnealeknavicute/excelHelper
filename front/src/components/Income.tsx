@@ -48,7 +48,7 @@ export default function Income () {
                 <Spacer/>
                 <Box>
                     <Stat>
-                        <StatNumber>£0.00</StatNumber>
+                        <StatNumber>€0.00</StatNumber>
                     </Stat>
                 </Box>
             </Flex>
