@@ -1,13 +1,27 @@
-import React from 'react';
+import React, {useEffect, useState} from 'react';
 import logo from './logo.svg';
 import './App.css';
 import Header from "./components/Header";
 import {Grid, GridItem} from "@chakra-ui/react";
 import Income from "./components/Income";
+import axios from "axios";
 
 function App() {
+    const [message, setMessage] = useState('');
+
+    useEffect(() => {
+        axios.get('http://localhost:8000/hello-world/')
+            .then(response => {
+                debugger
+                setMessage(response.data.message);
+            })
+            .catch(error => {
+                console.log(error);
+            });
+    }, []);
   return (
     <div className="App">
+        {message}
         <Grid
             templateAreas={`"header header"
                   "nav main"

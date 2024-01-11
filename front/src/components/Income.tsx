@@ -6,7 +6,17 @@ import {
     NumberInput,
     NumberInputField,
     NumberInputStepper,
-    NumberIncrementStepper, InputLeftElement, InputGroup, Box, IconButton
+    NumberIncrementStepper,
+    InputLeftElement,
+    InputGroup,
+    Box,
+    IconButton,
+    Flex,
+    Spacer,
+    StatHelpText,
+    Stat,
+    StatLabel,
+    StatNumber
 } from '@chakra-ui/react'
 import '../App.css';
 import { FaEuroSign } from "react-icons/fa";
@@ -22,7 +32,7 @@ export default function Income () {
 
     const format = (val: string) => `€` + val
     const parse = (val: string) => val.replace(/^\$/, '')
-    const [incomeValue, setIncomeValue] = React.useState('300')
+    const [incomeValue, setIncomeValue] = React.useState('300.00')
     const [jobValue, setJobValue] = React.useState('Job')
     const [incomeItems, setIncomeItem] = useState<incomeItem[]>([{
         name: jobValue,
@@ -31,42 +41,67 @@ export default function Income () {
 
     return (
         <div className='Income'>
-            <Text padding='0 0 10px 5px' fontSize='xl' >Your income</Text>
+            <Flex>
+                <Box>
+                    <Text padding='0 0 10px 5px' fontSize='xl' >Your income</Text>
+                </Box>
+                <Spacer/>
+                <Box>
+                    <Stat>
+                        <StatNumber>£0.00</StatNumber>
+                    </Stat>
+                </Box>
+            </Flex>
+
             {incomeItems.map((item: incomeItem) => {
                 return (
-                    <Box padding='20px' margin='10px' borderWidth='1px' borderRadius='lg'>
+                        <Box padding='5px 20px' margin='10px' borderWidth='1px' borderRadius='lg'>
+                            <Flex>
+                            <Box
+                                fontWeight='semibold'
 
-                        <Input
-                            onChange={(event) => {
-                                if (event) {
-                                    setJobValue(event.target.value)
-                                }
-                            }}
+                            >
+                                {item.name}
+                            </Box>
+                            <Spacer/>
+                            <Box className='p2'> € {item.income}</Box>
+                            </Flex>
 
-                            marginBottom='15px'
-                            value={item.name} />
-                        <NumberInput precision={2} step={10}
-                                     min={10}
-                                     onChange={(valueString) => setIncomeValue(parse(valueString))}
-                                     value={format(incomeValue)}
-                        >
-                            <NumberInputField />
-                            <NumberInputStepper>
-                                <NumberIncrementStepper />
-                                <NumberDecrementStepper />
-                            </NumberInputStepper>
-                        </NumberInput>
-                        {/*<IconButton*/}
-                        {/*    isRound={true}*/}
-                        {/*    variant='solid'*/}
-                        {/*    colorScheme='blue'*/}
-                        {/*    aria-label='Done'*/}
-                        {/*    fontSize='20px'*/}
-                        {/*    icon={<CheckIcon />}*/}
-                        {/*/>*/}
-                    </Box>
+                        </Box>
+
                 )
             })}
+            <Box padding='20px' margin='10px' borderWidth='1px' borderRadius='lg'>
+
+                <Input
+                    onChange={(event) => {
+                        if (event) {
+                            setJobValue(event.target.value)
+                        }
+                    }}
+
+                    marginBottom='15px'
+                    value={jobValue} />
+                <NumberInput precision={2} step={10}
+                             min={10}
+                             onChange={(valueString) => setIncomeValue(parse(valueString))}
+                             value={format(incomeValue)}
+                >
+                    <NumberInputField />
+                    <NumberInputStepper>
+                        <NumberIncrementStepper />
+                        <NumberDecrementStepper />
+                    </NumberInputStepper>
+                </NumberInput>
+                {/*<IconButton*/}
+                {/*    isRound={true}*/}
+                {/*    variant='solid'*/}
+                {/*    colorScheme='blue'*/}
+                {/*    aria-label='Done'*/}
+                {/*    fontSize='20px'*/}
+                {/*    icon={<CheckIcon />}*/}
+                {/*/>*/}
+            </Box>
 
             <div className='iconAddSec'>
                 <IconButton
