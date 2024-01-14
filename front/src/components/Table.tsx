@@ -22,20 +22,23 @@ export interface incomeItem {
     name: string,
     income: string
 }
-interface IProps {
-    title: string,
-    placeholder: string,
+interface ITableProps {
+    format: (val: string) => string,
+    parse: (val: string) => string,
 
 }
-export default function Income (props: IProps) {
+export default function Table(props: ITableProps) {
 
 
 
     const format = (val: string) => `€` + val
     const parse = (val: string) => val.replace(/^\$/, '')
-    const [incomeValue, setIncomeValue] = React.useState('')
-    const [jobValue, setJobValue] = React.useState('')
-    const [incomeItems, setIncomeItem] = useState<incomeItem[]>([])
+    const [incomeValue, setIncomeValue] = React.useState('300.00')
+    const [jobValue, setJobValue] = React.useState('Job')
+    const [incomeItems, setIncomeItem] = useState<incomeItem[]>([{
+        name: jobValue,
+        income: incomeValue
+    }])
     let totalIncome: number = 0
     incomeItems.forEach((item) => {
 
@@ -46,7 +49,7 @@ export default function Income (props: IProps) {
         <div className='Income'>
             <Flex>
                 <Box>
-                    <Text padding='0 0 10px 5px' fontSize='xl' >{props.title}</Text>
+                    <Text padding='0 0 10px 5px' fontSize='xl' >Your income</Text>
                 </Box>
                 <Spacer/>
                 <Box>
@@ -58,8 +61,8 @@ export default function Income (props: IProps) {
 
             {incomeItems.map((item: incomeItem) => {
                 return (
-                        <Box padding='5px 20px' margin='10px' borderWidth='1px' borderRadius='lg'>
-                            <Flex>
+                    <Box padding='5px 20px' margin='10px' borderWidth='1px' borderRadius='lg'>
+                        <Flex>
                             <Box
                                 fontWeight='semibold'
 
@@ -68,25 +71,24 @@ export default function Income (props: IProps) {
                             </Box>
                             <Spacer/>
                             <Box className='p2'> € {item.income}</Box>
-                            </Flex>
+                        </Flex>
 
-                        </Box>
+                    </Box>
 
                 )
             })}
             <Box padding='20px' margin='10px' borderWidth='1px' borderRadius='lg'>
 
-                <Input width='auto'
+                <Input
                     onChange={(event) => {
-                        if (event && event.target.value.length < 16) {
+                        if (event) {
                             setJobValue(event.target.value)
                         }
                     }}
-                    placeholder={props.placeholder}
+
                     marginBottom='15px'
                     value={jobValue} />
-                <NumberInput step={10}
-                             defaultValue={200}
+                <NumberInput precision={2} step={10}
                              min={10}
                              onChange={(valueString) => setIncomeValue(parse(valueString))}
                              value={format(incomeValue)}
@@ -97,6 +99,14 @@ export default function Income (props: IProps) {
                         <NumberDecrementStepper />
                     </NumberInputStepper>
                 </NumberInput>
+                {/*<IconButton*/}
+                {/*    isRound={true}*/}
+                {/*    variant='solid'*/}
+                {/*    colorScheme='blue'*/}
+                {/*    aria-label='Done'*/}
+                {/*    fontSize='20px'*/}
+                {/*    icon={<CheckIcon />}*/}
+                {/*/>*/}
             </Box>
 
             <div className='iconAddSec'>
