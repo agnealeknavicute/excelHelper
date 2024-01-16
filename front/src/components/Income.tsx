@@ -12,7 +12,11 @@ import {
     Flex,
     Spacer,
     Stat,
-    StatNumber
+    StatNumber,
+    Alert,
+    AlertIcon,
+    AlertTitle,
+    AlertDescription,
 } from '@chakra-ui/react'
 import '../App.css';
 import { FaEuroSign } from "react-icons/fa";
@@ -23,11 +27,13 @@ import axios from 'axios';
 
 export interface incomeItem {
     name: string,
-    income: string
+    value: string,
+    type: 'income' | 'expense'
 }
 interface IProps {
     title: string,
     placeholder: string,
+    link: string
 
 }
 export default function Income (props: IProps) {
@@ -39,17 +45,20 @@ export default function Income (props: IProps) {
     const [incomeValue, setIncomeValue] = React.useState('')
     const [jobValue, setJobValue] = React.useState('')
     const [incomeItems, setIncomeItem] = useState<incomeItem[]>([])
+    const [validSubmit, setValidSubmit] = useState(true)
+    const [dataSubmited, setDataSubmited] = useState(false)
     let totalIncome: number = 0
     incomeItems.forEach((item) => {
 
-        totalIncome += Number(item.income)
+        totalIncome += Number(item.value)
     })
 
     let sendData = (): void => {
-        axios.post(`http://127.0.0.1:8000/api/api/inc/`, {incomeItems})
+        axios.post(`http://127.0.0.1:8000/api/api/${props.link}/`, {incomeItems})
         .then(res => {
           console.log(res);
           console.log(res.data);
+          setDataSubmited(true)
         })
     }
 
@@ -78,13 +87,14 @@ export default function Income (props: IProps) {
                                 {item.name}
                             </Box>
                             <Spacer/>
-                            <Box className='p2'> € {item.income}</Box>
+                            <Box className='p2'> € {item.value}</Box>
                             </Flex>
 
                         </Box>
 
                 )
             })}
+            {}
             <Box padding='20px' margin='10px' borderWidth='1px' borderRadius='lg'>
 
                 <Input width='auto'
@@ -109,30 +119,41 @@ export default function Income (props: IProps) {
                     </NumberInputStepper>
                 </NumberInput>
             </Box>
-
-            <div className='iconAddSec'>
-                <IconButton
-                    isRound={true}
-                    variant='solid'
-                    colorScheme='blue'
-                    aria-label='Done'
-                    fontSize='20px'
-                    icon={<AddIcon />}
-                    onClick={() => {
-                        const newIncomeItem: incomeItem = {
-                            name: jobValue,
-                            income: incomeValue
-                        }
-                        setIncomeItem(incomeItems => [...incomeItems, newIncomeItem])
-                    }}
-                />
-            </div>
             <Box>
-                <Button 
-                    onClick={sendData}
+            <ButtonGroup size='sm' isAttached variant='solid'>
+            <Button 
+                    colorScheme='green'
+                    onClick={() => {
+                        if (incomeItems.length !== 0) {
+                            sendData();
+                        } else {
+                            setValidSubmit(false)
+                        }
+                    }}
                 >
                     Submit
                 </Button>
+                  <IconButton 
+                  colorScheme='green'
+                    onClick={() => {
+                        setValidSubmit(true)
+                        const newIncomeItem: incomeItem = {
+                            name: jobValue,
+                            value: incomeValue,
+                            type: props.link == 'inc' ? 'income' : 'expense'
+                        }
+                        setIncomeItem(incomeItems => [...incomeItems, newIncomeItem])
+                    }}                  aria-label='Add to friends' icon={<AddIcon />} />
+            </ButtonGroup>
+                    {!validSubmit ? 
+                        <Alert status='error'>
+                <AlertIcon />
+                <AlertTitle>Your browser is outdated!</AlertTitle>
+                <AlertDescription>Your Chakra experience may be degraded.</AlertDescription>
+              </Alert>  
+                    
+                  
+                : ''}
             </Box>
         </div>
     );

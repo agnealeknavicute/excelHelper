@@ -5,16 +5,10 @@ from django.db import models
 
 class Income(models.Model):
     name = models.CharField(max_length=255)
-    income = models.DecimalField(max_digits=10, decimal_places=2)
-    # Добавьте другие обязательные поля, если они есть
+    value = models.DecimalField(max_digits=10, decimal_places=2)
+    type = models.CharField(max_length=10, choices=[('income', 'Income'), ('expense', 'Expense')])
 
     def __str__(self):
-        return self.name
+        return f"{self.name} - {self.amount} ({self.type})"
 
-class Expense(models.Model):
-    name = models.CharField(max_length=10)
-    # intro = models.TextField(max_length=50)
-    info = models.TextField()
-    # img_link= models.TextField()
-    # manufacture = models.TextField(null=True, blank=True)
-    # exp = models.ForeignKey('Expense', blank=True, null=True, on_delete=models.PROTECT)
+

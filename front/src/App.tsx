@@ -69,7 +69,7 @@ function App() {
                         padding='15px'
                         borderRadius='20px'
                         borderWidth='1px'>
-                        <Income placeholder='Freelance' title='Your income'/>
+                        <Income link='inc' placeholder='Freelance' title='Your income'/>
                     </Box>
                     </Col>
                     <Col>
@@ -77,7 +77,7 @@ function App() {
                         padding='15px'
                         borderRadius='20px'
                         borderWidth='1px'>
-                        <Income placeholder='Food' title='Your expences'/>
+                        <Income link='exp' placeholder='Food' title='Your expences'/>
                     </Box>
                     </Col>
                     <Col xs={5}>Visual</Col>
