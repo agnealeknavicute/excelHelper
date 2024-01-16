@@ -17,6 +17,9 @@ import {
 import '../App.css';
 import { FaEuroSign } from "react-icons/fa";
 import {AddIcon, CheckIcon, Icon} from "@chakra-ui/icons";
+import { Button, ButtonGroup } from '@chakra-ui/react'
+import axios from 'axios';
+
 
 export interface incomeItem {
     name: string,
@@ -41,6 +44,14 @@ export default function Income (props: IProps) {
 
         totalIncome += Number(item.income)
     })
+
+    let sendData = (): void => {
+        axios.post(`http://127.0.0.1:8000/api/api/inc/`, {incomeItems})
+        .then(res => {
+          console.log(res);
+          console.log(res.data);
+        })
+    }
 
     return (
         <div className='Income'>
@@ -116,7 +127,13 @@ export default function Income (props: IProps) {
                     }}
                 />
             </div>
-
+            <Box>
+                <Button 
+                    onClick={sendData}
+                >
+                    Submit
+                </Button>
+            </Box>
         </div>
     );
 }

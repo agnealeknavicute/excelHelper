@@ -82,6 +82,9 @@ function App() {
                     </Col>
                     <Col xs={5}>Visual</Col>
                 </Row>
+                <Row>
+
+                </Row>
             </Container>
         </div>
     );
