@@ -2,7 +2,7 @@ import React, {useEffect, useState} from 'react';
 import logo from './logo.svg';
 import './App.css';
 import Header from "./components/Header";
-import {Box, Grid, GridItem} from "@chakra-ui/react";
+import {Box, Grid, Button, GridItem} from "@chakra-ui/react";
 import Income from "./components/Income";
 import axios from "axios";
 import Expenses from "./components/Expenses";
@@ -24,41 +24,16 @@ function App() {
                 console.log(error);
             });
     }, []);
+    let getData = (): void => {
+        axios.get(`http://127.0.0.1:8000/api/api/excelData/`)
+        .then(res => {
+          console.log(res);
+          console.log(res.data);
+        })
+    }
     return (
         <div className="App">
-            {/*{message}*/}
-            {/* <Grid
-                templateAreas={`"header header header"
-                  "nav main visual"
-                  "nav main visual"`}
-                gridTemplateColumns={'0.5fr 0.5fr auto'}
-                h='200px'
-                gap='1'
 
-            >
-                <GridItem pl='2' area={'header'}>
-                    <Header/>
-                </GridItem>
-                <GridItem pl='2' area={'nav'}>
-                    <Box
-                        padding='15px'
-                        borderRadius='20px'
-                        borderWidth='1px'>
-                        <Income title='Your income'/>
-                    </Box>
-                </GridItem>
-                <GridItem pl='2' area={'main'}>
-                    <Box
-                        padding='15px'
-                        borderRadius='20px'
-                        borderWidth='1px'>
-                        <Income title='Your expences'/>
-                    </Box>
-                </GridItem>
-                <GridItem pl='2' bg='blue' area={'visual'}>
-                    Visual
-                </GridItem>
-            </Grid> */}
             <Container>
                 <Row>
                     <Header/>
@@ -83,7 +58,13 @@ function App() {
                     <Col xs={5}>Visual</Col>
                 </Row>
                 <Row>
-
+                    <Button 
+                        onClick={() => {
+                            getData()
+                        }}
+                    >
+                        Submit
+                    </Button>
                 </Row>
             </Container>
         </div>
