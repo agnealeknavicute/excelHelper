@@ -27,6 +27,8 @@ MIDDLEWARE = [
     'corsheaders.middleware.CorsMiddleware',
     # Add above line just before this line 👇
     'django.middleware.common.CommonMiddleware',
+    'django.middleware.security.SecurityMiddleware',
+
 ]
 
 # 👇 Add this line here
@@ -46,6 +48,12 @@ SECRET_KEY = 'django-insecure-+g0bhv55+hdorki5xsr2vbq!bi-%wa%9q5vq*8!#510u2ru0#7
 DEBUG = True
 
 ALLOWED_HOSTS = ['XXX.XXX.XXX.XXX', 'localhost', '127.0.0.1']
+
+
+CORS_ALLOWED_ORIGINS = [
+    "http://localhost:3000",  # Add your frontend URL here
+]
+
 
 # Application definition
 
