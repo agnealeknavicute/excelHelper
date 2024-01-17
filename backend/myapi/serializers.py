@@ -39,3 +39,4 @@ class UpdatedIncomeSerializer(serializers.Serializer):
 
         income_items = [Income.objects.create(type=type_value, **item) for item in income_items_data]
         return {'incomeItems': income_items}
+

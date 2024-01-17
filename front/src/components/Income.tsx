@@ -47,6 +47,9 @@ export default function Income (props: IProps) {
     const [incomeItems, setIncomeItem] = useState<incomeItem[]>([])
     const [validSubmit, setValidSubmit] = useState(true)
     const [dataSubmited, setDataSubmited] = useState(false)
+    const [emptyName, setEmptyName] = useState(false)
+    const [emptyValue, setEmptyValue] = useState(false)
+
     let totalIncome: number = 0
     incomeItems.forEach((item) => {
 
@@ -94,31 +97,39 @@ export default function Income (props: IProps) {
 
                 )
             })}
-            {}
+            {!dataSubmited ? 
+            <div>
+
+
             <Box padding='20px' margin='10px' borderWidth='1px' borderRadius='lg'>
 
-                <Input width='auto'
-                    onChange={(event) => {
-                        if (event && event.target.value.length < 16) {
-                            setJobValue(event.target.value)
-                        }
-                    }}
-                    placeholder={props.placeholder}
-                    marginBottom='15px'
-                    value={jobValue} />
-                <NumberInput step={10}
-                             defaultValue={200}
-                             min={10}
-                             onChange={(valueString) => setIncomeValue(parse(valueString))}
-                             value={format(incomeValue)}
-                >
-                    <NumberInputField />
-                    <NumberInputStepper>
-                        <NumberIncrementStepper />
-                        <NumberDecrementStepper />
-                    </NumberInputStepper>
-                </NumberInput>
-            </Box>
+            <Input width='auto'
+                onChange={(event) => {
+                    if (event && event.target.value.length < 16) {
+                        setJobValue(event.target.value)
+                    }
+                }}
+                placeholder={props.placeholder}
+                marginBottom='15px'
+                isInvalid={true}
+                value={jobValue} />
+            <NumberInput step={10}
+                         isRequired={true}
+                         defaultValue={200}
+                         min={10}
+                         onChange={(valueString) => setIncomeValue(parse(valueString))}
+                         value={format(incomeValue)}
+            >
+                <NumberInputField />
+                <NumberInputStepper>
+                    <NumberIncrementStepper />
+                    <NumberDecrementStepper />
+                </NumberInputStepper>
+            </NumberInput>
+        </Box>
+        
+        
+            
             <Box>
             <ButtonGroup size='sm' isAttached variant='solid'>
             <Button 
@@ -136,6 +147,7 @@ export default function Income (props: IProps) {
                   <IconButton 
                   colorScheme='green'
                     onClick={() => {
+                        if (incomeValue.length > 0)
                         setValidSubmit(true)
                         const newIncomeItem: incomeItem = {
                             name: jobValue,
@@ -146,15 +158,16 @@ export default function Income (props: IProps) {
                     }}                  aria-label='Add to friends' icon={<AddIcon />} />
             </ButtonGroup>
                     {!validSubmit ? 
-                        <Alert status='error'>
+                        <Alert status='error' height='50px' margin='15px 0'>
                 <AlertIcon />
-                <AlertTitle>Your browser is outdated!</AlertTitle>
-                <AlertDescription>Your Chakra experience may be degraded.</AlertDescription>
+                <AlertDescription>You have to add at least one {props.link === 'inc' ? 'income' : 'expense'}</AlertDescription>
               </Alert>  
                     
                   
                 : ''}
             </Box>
+            </div>
+            : '' }
         </div>
     );
 }
