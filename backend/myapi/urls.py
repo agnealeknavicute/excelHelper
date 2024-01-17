@@ -1,7 +1,7 @@
 # Используйте
 from django.urls import path, include
 from . import views
-from myapi.views import IncomeApi, ExpenseApi 
+from myapi.views import IncomeApi
 from django.contrib import admin
 from rest_framework.routers import DefaultRouter
 
@@ -9,7 +9,6 @@ from rest_framework.routers import DefaultRouter
 
 router = DefaultRouter()
 router.register(r'api/inc', IncomeApi)
-router.register(r'api/exp', ExpenseApi)
 
 urlpatterns = [
     # path('hello-world/', views.hello_world, name='hello_world'),

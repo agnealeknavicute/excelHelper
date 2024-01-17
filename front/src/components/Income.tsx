@@ -57,7 +57,8 @@ export default function Income (props: IProps) {
     })
 
     let sendData = (): void => {
-        axios.post(`http://127.0.0.1:8000/api/api/${props.link}/`, {incomeItems})
+        let expenseItems = incomeItems.slice(0)
+        axios.post(`http://127.0.0.1:8000/api/api/inc/`, props.link === 'inc' ? {incomeItems} : {expenseItems})
         .then(res => {
           console.log(res);
           console.log(res.data);
