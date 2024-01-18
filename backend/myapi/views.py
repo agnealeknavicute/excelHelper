@@ -65,27 +65,36 @@ class ExcelManager:
 
     @staticmethod
     def write_to_excel(existing_sheet, new_data, sheet_name, excel_file_path):
-        # Если лист не содержит колонки "name" или "value", добавляем их
+        # Если лист не содержит колонки "name", "value" или "total", добавляем их
         if not existing_sheet['A1'].value or 'name' not in existing_sheet['A1'].value:
             existing_sheet.insert_cols(1)
             existing_sheet['A1'] = 'name'
         if not existing_sheet['B1'].value or 'value' not in existing_sheet['B1'].value:
             existing_sheet.insert_cols(2)
             existing_sheet['B1'] = 'value'
+        if not existing_sheet['C1'].value or 'total' not in existing_sheet['C1'].value:
+            existing_sheet.insert_cols(3)
+            existing_sheet['C1'] = 'total'
 
-        # Получаем индексы столбцов "name" и "value"
+        # Получаем индексы столбцов "name", "value" и "total"
         name_column_index = existing_sheet['A1'].column
         value_column_index = existing_sheet['B1'].column
+        total_column_index = existing_sheet['C1'].column
 
         # Очищаем существующие данные
         ExcelManager.clear_existing_data(existing_sheet)
 
         # Записываем новые данные
+        total_sum = 0  # Инициализируем переменную для суммы значений
         for row in new_data:
             # Разделяем объект на name и value
             name, value = row.get('name'), row.get('value')
+            total_sum += float(value)  # Добавляем значение к сумме
             # Добавляем данные в лист
-            existing_sheet.append([name, value])
+            existing_sheet.append([name, value, None])  # None в колонке "total" на данный момент
+
+        # Записываем сумму в ячейку "total" первой строки
+        existing_sheet.cell(row=2, column=total_column_index, value=total_sum)
 
         book = existing_sheet.parent
         book.save(excel_file_path)
