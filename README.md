@@ -18,3 +18,9 @@ Lai izveidotu mūsu tīmekļa vietni, bija jāiztaisa Backend un Frontend, tāp�
 Galvenā problēma bija savienot Backend daļu, kas rakstīta python valodā, ar Frontend. Šim pienākumam izmantojām Django programmatūru un DWF (Django Web Framework). Vispirms izveidoju myapi ar DWF palīdzību un definēju serializers un viewsets, lai nodrošinātu datu izmaiņas un lasīšanu caur API. '[urls.py](https://urls.py/ "https://urls.py")' fails izmantojās, lai sasaistītu mūsu API punktus ar attiecīgajiem viewsets.
 
 Vislielāko darba laiku aizņēma fails '[views.py](https://views.py/ "https://views.py")'. Šajā failā mums ļoti palīdzēja openpyxl bibliotēka. Klasē ExcelManager pārbauda, vai Excel fails jau eksistē, un ja nē, tad to izveido. Ja fails jau eksistē, tad tiek atvērts un iegūta norādītā lapa. Ja fails nepastāv, tiek izveidots jauns fails ar norādīto lapu. Klase IncExpApi  apstrādā POST pieprasījumus uz /api/incexp. Ja pieprasījumā ir dati par ienākumiem (incomeItems), tad tiek izveidoti jauni dati no šiem ienākumiem, un šie dati tiek ierakstīti Excel failā lapā 'Incomes'. Ja ir dati par izmaksām (expenseItems), tad šie dati tiek ierakstīti Excel faila lapā 'Expenses'.
+
+## Frontend
+
+Tā kā mūsu projekta galvenā ideja bija nodrošināt lietotājiem skaistu saskarni darbam ar Excel, vietnei bija jāatbilst mūsdienu dizaina un ātruma standartiem.
+
+Mēs izmantojām React, lai izveidotu klienta pusi un pārvaldītu dažādas vietnes daļas kā komponentu. Turklāt nākotnē mēs varēsim ērti mainīt programmas izskatu, pateicoties tam, ka React komponentus var ērti atkārtoti izmantot, pārdalīt utt. React komponenti tika rakstīti TypeScript, lai piešķirtu tipus datiem, kas nāk no servera un tiek nosūtīti uz to. Pieprasījumus apstrādājām ar axios bibliotēkas palīdzību, jo mums jau bija pieredze ar to, skaistai vizualizācijai izmantojām chakra ui un bootstrap bibliotēkas.
