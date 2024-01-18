@@ -5,7 +5,7 @@
 
 ### Ideja
 
-Mūsu ideja ir izveidot tīmekļa vietni ar nosaukumu "ExcelHelper", lai cilvēkiem būtu vieglāk izsekot savus ienākumus un izmaksas. Mūsu tīmekļa vietnē lietotājs var ierakstīt savus ienākumus (Your income) ailītē un izmaksas (Your expense) ailītē. Nospiežot uz pogu "Get excel file" lietotājs saņem uz datoru excel failu, kurā ir divas lapas. Pirmajā lapā "Incomes" lietotājs saņem tabulu ar ienākumiem, otrajā lapā "Expenses" par izmaksām.
+Mūsu ideja ir izveidot tīmekļa vietni ar nosaukumu "ExcelHelper", lai cilvēkiem būtu vieglāk izsekot savus ienākumus un izmaksas. Mūsu tīmekļa vietnē lietotājs var ierakstīt savus ienākumus (Your income) ailītē un izmaksas (Your expense) ailītē. Nospiežot uz pogu "Get excel file" lietotājs saņem uz datoru excel failu, kurā ir divas lapas. Pirmajā lapā "Incomes" lietotājs saņem tabulu ar ienākumiem un kopējo ienākumu summu(Total), otrajā lapā "Expenses" par izmaksām.
 
 ### Komunikācija un darba sadalīšana
 
@@ -13,19 +13,19 @@ Tā kā mēs strādājām komandā, mums bija jāapmainās ar kodiem. Lai to izp
 
 Lai izveidotu mūsu tīmekļa vietni, bija jāiztaisa Backend un Frontend, tāpēc sadalījām mūsu pienākumus, ka Evelīna strādāja ar Backend daļu, savukārt Agne ar Frontend.
 
-## Backend
+### Backend
 
 Galvenā problēma bija savienot Backend daļu, kas rakstīta python valodā, ar Frontend. Šim pienākumam izmantojām Django programmatūru un DWF (Django Web Framework). Vispirms izveidoju myapi ar DWF palīdzību un definēju serializers un viewsets, lai nodrošinātu datu izmaiņas un lasīšanu caur API. '[urls.py](https://urls.py/ "https://urls.py")' fails izmantojās, lai sasaistītu mūsu API punktus ar attiecīgajiem viewsets.
 
 Vislielāko darba laiku aizņēma fails '[views.py](https://views.py/ "https://views.py")'. Šajā failā mums ļoti palīdzēja openpyxl bibliotēka. Klasē ExcelManager pārbauda, vai Excel fails jau eksistē, un ja nē, tad to izveido. Ja fails jau eksistē, tad tiek atvērts un iegūta norādītā lapa. Ja fails nepastāv, tiek izveidots jauns fails ar norādīto lapu. Klase IncExpApi  apstrādā POST pieprasījumus uz /api/incexp. Ja pieprasījumā ir dati par ienākumiem (incomeItems), tad tiek izveidoti jauni dati no šiem ienākumiem, un šie dati tiek ierakstīti Excel failā lapā 'Incomes'. Ja ir dati par izmaksām (expenseItems), tad šie dati tiek ierakstīti Excel faila lapā 'Expenses'.
 
-## Frontend
+### Frontend
 
 Tā kā mūsu projekta galvenā ideja bija nodrošināt lietotājiem skaistu saskarni darbam ar Excel, vietnei bija jāatbilst mūsdienu dizaina un ātruma standartiem.
 
 Mēs izmantojām React, lai izveidotu klienta pusi un pārvaldītu dažādas vietnes daļas kā komponentu. Turklāt nākotnē mēs varēsim ērti mainīt programmas izskatu, pateicoties tam, ka React komponentus var ērti atkārtoti izmantot, pārdalīt utt. React komponenti tika rakstīti TypeScript, lai piešķirtu tipus datiem, kas nāk no servera un tiek nosūtīti uz to. Pieprasījumus apstrādājām ar axios bibliotēkas palīdzību, jo mums jau bija pieredze ar to, skaistai vizualizācijai izmantojām chakra ui un bootstrap bibliotēkas.
 
-## Start the project
+### Start the project
 
 Instalējiet atkarības:
 
@@ -53,3 +53,9 @@ python manage.py migrate
 Palaidiet Django serveri:
 
 python manage.py runserver
+
+
+### Paraugs
+
+[![Dotajā video Jūs varat redzēt, kā strādā mūsu tīmekļa vietne](https://img.youtube.com/vi/2ctMnX51UTQ/0.jpg)](https://www.youtube.com/watch?v=2ctMnX51UTQ)
+
