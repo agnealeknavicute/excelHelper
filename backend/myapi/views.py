@@ -7,6 +7,38 @@ from rest_framework.response import Response
 from myapi.models import Income, Expense
 from myapi.serializers import UpdatedIncomeSerializer
 from rest_framework import serializers
+from django.http import FileResponse
+from django.views import View
+from django.http import FileResponse
+import os
+
+class ExcelDownloadView(View):
+    def get(self, request, *args, **kwargs):
+        excel_file_path = 'income_expense_data.xlsx'
+
+        # Проверяем существование файла
+        if os.path.exists(excel_file_path):
+            # Открываем файл с использованием openpyxl
+            book = openpyxl.load_workbook(excel_file_path)
+
+            # Удаляем лист "Sheet" (если он существует)
+            sheet_name = 'Sheet'
+            if sheet_name in book.sheetnames:
+                sheet = book[sheet_name]
+                book.remove(sheet)
+
+            # Сохраняем изменения
+            book.save(excel_file_path)
+
+            # Отправляем файл обратно клиенту
+            file = open(excel_file_path, 'rb')
+            response = FileResponse(file, content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
+            response['Content-Disposition'] = 'attachment; filename="example.xlsx"'
+            return response
+        else:
+            # Если файл не найден, возвращаем ошибку или другой ответ
+            return HttpResponseNotFound('File not found')
+
 
 class ExcelManager:
     @staticmethod
@@ -27,6 +59,11 @@ class ExcelManager:
         return sheet
 
     @staticmethod
+    def clear_existing_data(existing_sheet):
+        # Удаляем существующие записи в колонках "name" и "value"
+        existing_sheet.delete_rows(2, existing_sheet.max_row)
+
+    @staticmethod
     def write_to_excel(existing_sheet, new_data, sheet_name, excel_file_path):
         # Если лист не содержит колонки "name" или "value", добавляем их
         if not existing_sheet['A1'].value or 'name' not in existing_sheet['A1'].value:
@@ -40,6 +77,10 @@ class ExcelManager:
         name_column_index = existing_sheet['A1'].column
         value_column_index = existing_sheet['B1'].column
 
+        # Очищаем существующие данные
+        ExcelManager.clear_existing_data(existing_sheet)
+
+        # Записываем новые данные
         for row in new_data:
             # Разделяем объект на name и value
             name, value = row.get('name'), row.get('value')

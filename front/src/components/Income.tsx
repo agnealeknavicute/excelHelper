@@ -45,10 +45,9 @@ export default function Income (props: IProps) {
     const [incomeValue, setIncomeValue] = React.useState('')
     const [jobValue, setJobValue] = React.useState('')
     const [incomeItems, setIncomeItem] = useState<incomeItem[]>([])
-    const [validSubmit, setValidSubmit] = useState(true)
+    const [validInputs, setValidInputs] = useState(true)
     const [dataSubmited, setDataSubmited] = useState(false)
-    const [emptyName, setEmptyName] = useState(false)
-    const [emptyValue, setEmptyValue] = useState(false)
+    const [validSubmit, setValidSubmit] = useState(true)
 
     let totalIncome: number = 0
     incomeItems.forEach((item) => {
@@ -112,12 +111,13 @@ export default function Income (props: IProps) {
                 }}
                 placeholder={props.placeholder}
                 marginBottom='15px'
-                isInvalid={true}
+                isInvalid={!validInputs}
                 value={jobValue} />
             <NumberInput step={10}
                          isRequired={true}
                          defaultValue={200}
                          min={10}
+                         isInvalid={!validInputs}
                          onChange={(valueString) => setIncomeValue(parse(valueString))}
                          value={format(incomeValue)}
             >
@@ -138,6 +138,8 @@ export default function Income (props: IProps) {
                     onClick={() => {
                         if (incomeItems.length !== 0) {
                             sendData();
+                            setDataSubmited(true)
+
                         } else {
                             setValidSubmit(false)
                         }
@@ -148,17 +150,28 @@ export default function Income (props: IProps) {
                   <IconButton 
                   colorScheme='green'
                     onClick={() => {
-                        if (incomeValue.length > 0)
-                        setValidSubmit(true)
-                        const newIncomeItem: incomeItem = {
-                            name: jobValue,
-                            value: incomeValue,
-                            type: props.link == 'inc' ? 'income' : 'expense'
+                        if (jobValue.length > 0 && incomeValue.length > 0) {
+                            setValidInputs(true)
+                            setValidSubmit(true)
+
+                            const newIncomeItem: incomeItem = {
+                                name: jobValue,
+                                value: incomeValue,
+                                type: props.link == 'inc' ? 'income' : 'expense'
+                            }
+                            setIncomeItem(incomeItems => [...incomeItems, newIncomeItem])
+                        } else {
+                            setValidInputs(false)
                         }
-                        setIncomeItem(incomeItems => [...incomeItems, newIncomeItem])
-                    }}                  aria-label='Add to friends' icon={<AddIcon />} />
+
+                    }}         
+                             aria-label='Add to friends' icon={<AddIcon />} />
             </ButtonGroup>
-                    {!validSubmit ? 
+
+            </Box>
+            </div>
+            : '' }
+                                {!validSubmit ? 
                         <Alert status='error' height='50px' margin='15px 0'>
                 <AlertIcon />
                 <AlertDescription>You have to add at least one {props.link === 'inc' ? 'income' : 'expense'}</AlertDescription>
@@ -166,9 +179,6 @@ export default function Income (props: IProps) {
                     
                   
                 : ''}
-            </Box>
-            </div>
-            : '' }
         </div>
     );
 }
