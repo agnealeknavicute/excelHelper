@@ -1,123 +1,124 @@
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
-import pandas as pd
 import openpyxl
 from openpyxl.styles import Alignment
 from rest_framework import viewsets, permissions, status
 from rest_framework.response import Response
-from myapi.models import Income
+from myapi.models import IncExpModel
 from myapi.serializers import UpdatedIncomeSerializer
+from rest_framework import serializers
+from django.http import FileResponse
+from django.views import View
+from django.http import FileResponse
+import os
 
-a=10
-class IncomeApi(viewsets.ModelViewSet):
-    queryset = Income.objects.all()
-    serializer_class = UpdatedIncomeSerializer
-    http_method_names = ['get', 'post']
-    permission_classes = [permissions.AllowAny]
+class ExcelDownloadView(View):
+    def get(self, request, *args, **kwargs):
+        excel_file_path = 'income_expense_data.xlsx'
 
-    def create(self, request, *args, **kwargs):
-        serializer = self.get_serializer(data=request.data)
-        serializer.is_valid(raise_exception=True)
-        self.perform_create(serializer)
+        if os.path.exists(excel_file_path):
+            book = openpyxl.load_workbook(excel_file_path)
 
-        # Преобразование данных сериализатора в словарь
-        data_list = serializer.validated_data['incomeItems']
+            sheet_name = 'Sheet'
+            if sheet_name in book.sheetnames:
+                sheet = book[sheet_name]
+                book.remove(sheet)
 
-        # Создание DataFrame из новых данных
-        new_df = pd.DataFrame(data_list)
+            book.save(excel_file_path)
 
-        # Путь к файлу Excel
-        excel_file_path = 'income_data.xlsx'
+            file = open(excel_file_path, 'rb')
+            response = FileResponse(file, content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
+            response['Content-Disposition'] = 'attachment; filename="example.xlsx"'
+            return response
+        else:
+            return HttpResponseNotFound('File not found')
 
-        # Если файл не существует, создаем новый
+
+class ExcelManager:
+    @staticmethod
+    def create_or_load_excel(excel_file_path, sheet_name):
         try:
-            existing_df = pd.read_excel(excel_file_path, engine='openpyxl')
-        except Exception as e:
-            print(f"Error reading existing file: {e}")
-            existing_df = pd.DataFrame()
-            existing_df.to_excel(excel_file_path, index=False, engine='openpyxl')
-            print(f"Created a new file: {excel_file_path}")
-
-        # Объединение существующего DataFrame с новым
-        updated_df = pd.concat([existing_df, new_df], ignore_index=True)
-
-        # Сохранение обновленного DataFrame в Excel
-        with pd.ExcelWriter(excel_file_path, engine='openpyxl', mode='a', if_sheet_exists='replace') as writer:
-            try:
-                # Попытка записи в существующий лист 'Incomes'
-                updated_df.to_excel(writer, index=False, sheet_name='Incomes')
-            except ValueError:
-                # Если лист существует, то записываем в него
-                writer.book = openpyxl.load_workbook(excel_file_path)
-                writer.sheets = {ws.title: ws for ws in writer.book.worksheets}
-                sheet_name = 'Incomes' if 'Incomes' in writer.sheets else None
-                updated_df.to_excel(writer, index=False, sheet_name=sheet_name)
-
-                a = a+10
-                # Получение ссылки на лист 'Incomes'
-                sheet = writer.sheets[str(a)]
-
-                # Добавление заголовка над таблицей
-                title_cell = sheet.cell(row=1, column=1, value='INCOMES')
-                title_cell.alignment = Alignment(horizontal='center')
-                
-
-                # Добавление названий колонок под заголовком
-                for col_num, value in enumerate(updated_df.columns.values, start=1):
-                    col_name_cell = sheet.cell(row=2, column=col_num, value=value)
-                    col_name_cell.alignment = Alignment(horizontal='center')
-
-        headers = self.get_success_headers(serializer.data)
-        return Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
-
-    def perform_create(self, serializer):
-        serializer.save()
-
-
-
-
-
-
-
-
-
-
-  
-
-
-
-class ExpenseApi(viewsets.ModelViewSet):
-    queryset = Income.objects.all()
-    serializer_class = UpdatedIncomeSerializer
-    http_method_names = ['get', 'post']
-    permission_classes = [permissions.AllowAny]
-
-    def create(self, request, *args, **kwargs):
-        serializer = self.get_serializer(data=request.data)
-        serializer.is_valid(raise_exception=True)
-        self.perform_create(serializer)
-
-        # Преобразование данных сериализатора в словарь
-        data_list = serializer.validated_data['incomeItems']
-
-        # Чтение существующего файла Excel или создание нового, если файла нет
-        excel_file_path = 'expense_data.xlsx'
-        try:
-            existing_df = pd.read_excel(excel_file_path, engine='openpyxl')
+            book = openpyxl.load_workbook(excel_file_path)
+            if sheet_name not in book.sheetnames:
+                book.create_sheet(sheet_name)
+                book.save(excel_file_path)
         except FileNotFoundError:
-            existing_df = pd.DataFrame()
+            book = openpyxl.Workbook()
+            book.save(excel_file_path)
+            book.create_sheet(sheet_name)
+            book.save(excel_file_path)
 
-        # Создание DataFrame из новых данных
-        new_df = pd.DataFrame(data_list)
+        sheet = book[sheet_name]
+        return sheet
 
-        # Объединение существующего DataFrame с новым
-        updated_df = pd.concat([existing_df, new_df], ignore_index=True)
+    @staticmethod
+    def clear_existing_data(existing_sheet):
+        existing_sheet.delete_rows(2, existing_sheet.max_row)
 
-        # Сохранение обновленного DataFrame в Excel
-        updated_df.to_excel(excel_file_path, index=False, engine='openpyxl')
+    @staticmethod
+    def write_to_excel(existing_sheet, new_data, sheet_name, excel_file_path):
+        if not existing_sheet['A1'].value or 'name' not in existing_sheet['A1'].value:
+            existing_sheet.insert_cols(1)
+            existing_sheet['A1'] = 'name'
+        if not existing_sheet['B1'].value or 'value' not in existing_sheet['B1'].value:
+            existing_sheet.insert_cols(2)
+            existing_sheet['B1'] = 'value'
+        if not existing_sheet['C1'].value or 'total' not in existing_sheet['C1'].value:
+            existing_sheet.insert_cols(3)
+            existing_sheet['C1'] = 'total'
+
+        name_column_index = existing_sheet['A1'].column
+        value_column_index = existing_sheet['B1'].column
+        total_column_index = existing_sheet['C1'].column
+
+        ExcelManager.clear_existing_data(existing_sheet)
+
+        total_sum = 0  
+        for row in new_data:
+            name, value = row.get('name'), row.get('value')
+            total_sum += float(value) 
+            existing_sheet.append([name, value, None])  
+
+        existing_sheet.cell(row=2, column=total_column_index, value=total_sum)
+
+        book = existing_sheet.parent
+        book.save(excel_file_path)
+
+class IncExpApi(viewsets.ModelViewSet):
+    queryset = IncExpModel.objects.all()
+    serializer_class = UpdatedIncomeSerializer
+    http_method_names = ['get', 'post']
+    permission_classes = [permissions.AllowAny]
+
+    def create(self, request, *args, **kwargs):
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        self.perform_create(serializer)
+
+        data_list = serializer.validated_data.get('incomeItems', [])
+        if data_list:
+            new_data = [{'name': item['name'], 'value': item['value']} for item in data_list]
+
+            excel_file_path = 'income_expense_data.xlsx'
+            sheet_name = 'Incomes'
+
+            existing_sheet = ExcelManager.create_or_load_excel(excel_file_path, sheet_name)
+
+            ExcelManager.write_to_excel(existing_sheet, new_data, sheet_name, excel_file_path)
+        else:
+            data_list = serializer.validated_data.get('expenseItems', [])
+            new_data = [{'name': item['name'], 'value': item['value']} for item in data_list]
+
+            excel_file_path = 'income_expense_data.xlsx'
+            sheet_name = 'Expenses'
+
+            existing_sheet = ExcelManager.create_or_load_excel(excel_file_path, sheet_name)
+
+            ExcelManager.write_to_excel(existing_sheet, new_data, sheet_name, excel_file_path)
 
         headers = self.get_success_headers(serializer.data)
         return Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
+        
 
     def perform_create(self, serializer):
         serializer.save()
