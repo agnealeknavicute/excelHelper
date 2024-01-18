@@ -16,27 +16,21 @@ class ExcelDownloadView(View):
     def get(self, request, *args, **kwargs):
         excel_file_path = 'income_expense_data.xlsx'
 
-        # Проверяем существование файла
         if os.path.exists(excel_file_path):
-            # Открываем файл с использованием openpyxl
             book = openpyxl.load_workbook(excel_file_path)
 
-            # Удаляем лист "Sheet" (если он существует)
             sheet_name = 'Sheet'
             if sheet_name in book.sheetnames:
                 sheet = book[sheet_name]
                 book.remove(sheet)
 
-            # Сохраняем изменения
             book.save(excel_file_path)
 
-            # Отправляем файл обратно клиенту
             file = open(excel_file_path, 'rb')
             response = FileResponse(file, content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
             response['Content-Disposition'] = 'attachment; filename="example.xlsx"'
             return response
         else:
-            # Если файл не найден, возвращаем ошибку или другой ответ
             return HttpResponseNotFound('File not found')
 
 
@@ -54,18 +48,15 @@ class ExcelManager:
             book.create_sheet(sheet_name)
             book.save(excel_file_path)
 
-        # Загружаем данные с указанного листа
         sheet = book[sheet_name]
         return sheet
 
     @staticmethod
     def clear_existing_data(existing_sheet):
-        # Удаляем существующие записи в колонках "name" и "value"
         existing_sheet.delete_rows(2, existing_sheet.max_row)
 
     @staticmethod
     def write_to_excel(existing_sheet, new_data, sheet_name, excel_file_path):
-        # Если лист не содержит колонки "name", "value" или "total", добавляем их
         if not existing_sheet['A1'].value or 'name' not in existing_sheet['A1'].value:
             existing_sheet.insert_cols(1)
             existing_sheet['A1'] = 'name'
@@ -76,24 +67,18 @@ class ExcelManager:
             existing_sheet.insert_cols(3)
             existing_sheet['C1'] = 'total'
 
-        # Получаем индексы столбцов "name", "value" и "total"
         name_column_index = existing_sheet['A1'].column
         value_column_index = existing_sheet['B1'].column
         total_column_index = existing_sheet['C1'].column
 
-        # Очищаем существующие данные
         ExcelManager.clear_existing_data(existing_sheet)
 
-        # Записываем новые данные
-        total_sum = 0  # Инициализируем переменную для суммы значений
+        total_sum = 0  
         for row in new_data:
-            # Разделяем объект на name и value
             name, value = row.get('name'), row.get('value')
-            total_sum += float(value)  # Добавляем значение к сумме
-            # Добавляем данные в лист
-            existing_sheet.append([name, value, None])  # None в колонке "total" на данный момент
+            total_sum += float(value) 
+            existing_sheet.append([name, value, None])  
 
-        # Записываем сумму в ячейку "total" первой строки
         existing_sheet.cell(row=2, column=total_column_index, value=total_sum)
 
         book = existing_sheet.parent
@@ -117,10 +102,8 @@ class IncExpApi(viewsets.ModelViewSet):
             excel_file_path = 'income_expense_data.xlsx'
             sheet_name = 'Incomes'
 
-            # Create or load the Excel file
             existing_sheet = ExcelManager.create_or_load_excel(excel_file_path, sheet_name)
 
-            # Write the updated data to the Excel file
             ExcelManager.write_to_excel(existing_sheet, new_data, sheet_name, excel_file_path)
         else:
             data_list = serializer.validated_data.get('expenseItems', [])
@@ -129,10 +112,8 @@ class IncExpApi(viewsets.ModelViewSet):
             excel_file_path = 'income_expense_data.xlsx'
             sheet_name = 'Expenses'
 
-            # Create or load the Excel file
             existing_sheet = ExcelManager.create_or_load_excel(excel_file_path, sheet_name)
 
-            # Write the updated data to the Excel file
             ExcelManager.write_to_excel(existing_sheet, new_data, sheet_name, excel_file_path)
 
         headers = self.get_success_headers(serializer.data)
