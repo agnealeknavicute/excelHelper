@@ -24,3 +24,32 @@ Vislielāko darba laiku aizņēma fails '[views.py](https://views.py/ "https://v
 Tā kā mūsu projekta galvenā ideja bija nodrošināt lietotājiem skaistu saskarni darbam ar Excel, vietnei bija jāatbilst mūsdienu dizaina un ātruma standartiem.
 
 Mēs izmantojām React, lai izveidotu klienta pusi un pārvaldītu dažādas vietnes daļas kā komponentu. Turklāt nākotnē mēs varēsim ērti mainīt programmas izskatu, pateicoties tam, ka React komponentus var ērti atkārtoti izmantot, pārdalīt utt. React komponenti tika rakstīti TypeScript, lai piešķirtu tipus datiem, kas nāk no servera un tiek nosūtīti uz to. Pieprasījumus apstrādājām ar axios bibliotēkas palīdzību, jo mums jau bija pieredze ar to, skaistai vizualizācijai izmantojām chakra ui un bootstrap bibliotēkas.
+
+## Start the project
+
+Instalējiet atkarības:
+
+Projekta front mapē palaidiet atkarību instalēšanas komandu:
+
+npm install
+
+Palaidiet React izstrādes serveri:
+
+npm start
+
+Tādējādi tiks palaists vietējais React izstrādes serveris, un jūs varēsiet apskatīt savu projektu pārlūkprogrammā http://localhost:3000.
+
+Iestatiet un palaidiet Django lietojumprogrammu:
+
+Pārliecinieties, ka jums ir instalēts Python un Django. Ja tā nav, instalējiet tos:
+
+pip install django
+Pārejiet uz mapi, kurā atrodas jūsu Django lietojumprogramma (backend).
+
+Palaidiet migrāciju:
+
+python manage.py migrate
+
+Palaidiet Django serveri:
+
+python manage.py runserver
