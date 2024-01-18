@@ -4,7 +4,7 @@ import openpyxl
 from openpyxl.styles import Alignment
 from rest_framework import viewsets, permissions, status
 from rest_framework.response import Response
-from myapi.models import Income, Expense
+from myapi.models import IncExpModel
 from myapi.serializers import UpdatedIncomeSerializer
 from rest_framework import serializers
 from django.http import FileResponse
@@ -99,8 +99,8 @@ class ExcelManager:
         book = existing_sheet.parent
         book.save(excel_file_path)
 
-class IncomeApi(viewsets.ModelViewSet):
-    queryset = Income.objects.all()
+class IncExpApi(viewsets.ModelViewSet):
+    queryset = IncExpModel.objects.all()
     serializer_class = UpdatedIncomeSerializer
     http_method_names = ['get', 'post']
     permission_classes = [permissions.AllowAny]
